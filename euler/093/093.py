@@ -1,5 +1,5 @@
 import itertools
-# Doesn't pass test 11
+# Doesn't pass test 17
 # Brute force attempt, passes all timeouts
 
 def applyOperations(val, vals_found):
@@ -26,7 +26,7 @@ def div(index, arr):
         raise IndexError
     if arr[index + 1] == 0:
         raise ZeroDivisionError
-    return arr[:index] + [arr[index] / arr[index + 1]] + arr[index+2:]
+    return arr[:index] + [round(arr[index] / arr[index + 1], 8)] + arr[index+2:]
 
 def mul(index, arr):
     if index >= len(arr):
