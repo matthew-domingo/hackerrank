@@ -3,15 +3,15 @@ import itertools
 # Brute force attempt, passes all timeouts
 
 def applyOperations(val, num_of_operations, vals_found):
-    x = [0 for i in range(4)]
     for i in range(num_of_operations):
-        x[1] = mul(i, val)
-        x[2] = add(i, val)
-        x[3] = sub(i, val)
+        x = [0 for i in range(4)]
+        x[0] = mul(i, val)
+        x[1] = add(i, val)
+        x[2] = sub(i, val)
         try:
-            x[0] = div(i, val)
+            x[3] = div(i, val)
         except ZeroDivisionError:
-            x[0] = x[1]
+            x.pop()
         if num_of_operations > 0:
             for arr in x:
                 applyOperations(arr, len(arr) - 1, vals_found)
@@ -30,17 +30,17 @@ def div(index, arr):
 def mul(index, arr):
     if index >= len(arr):
         raise IndexError
-    return arr[:index] + [arr[index - 1] * arr[index]] + arr[index+2:]
+    return arr[:index] + [arr[index] * arr[index + 1]] + arr[index+2:]
 
 def add(index, arr):
     if index >= len(arr):
         raise IndexError
-    return arr[:index] + [arr[index - 1] + arr[index]] + arr[index+2:]
+    return arr[:index] + [arr[index] + arr[index + 1]] + arr[index+2:]
 
 def sub(index, arr):
     if index >= len(arr):
         raise IndexError
-    return arr[:index] + [arr[index - 1] - arr[index]] + arr[index+2:]
+    return arr[:index] + [arr[index] - arr[index + 1]] + arr[index+2:]
 
 def main():
     _ = input()
