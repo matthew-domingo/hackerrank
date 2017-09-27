@@ -1,5 +1,5 @@
 import itertools
-# Doesn't pass all tests
+# Doesn't pass test 11
 # Brute force attempt, passes all timeouts
 
 def applyOperations(val, vals_found):
@@ -44,17 +44,21 @@ def sub(index, arr):
     return arr[:index] + [arr[index] - arr[index + 1]] + arr[index+2:]
 
 def main():
-    _ = input()
-    val = [float(i) for i in input().split()]
+    n = int(input())
+    # input them as floats to call is_integer later
+    vals = [float(i) for i in input().split()]
+    vals = vals[:n]
     vals_found = set()
     # removes all duplicate tuples
-    permutates = set(itertools.permutations(val))
+    permutates = set(itertools.permutations(vals))
     for permutation in permutates:
         l_perm = list(permutation)
         applyOperations(l_perm, vals_found)
     vals_found_list = sorted(list(vals_found))
     index = 0
     cnt = 1
+    if not vals_found_list:
+        return 0
     while vals_found_list[index] == cnt:
         index += 1
         cnt += 1
