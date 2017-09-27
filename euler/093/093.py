@@ -1,19 +1,25 @@
-import itertools
-# Doesn't pass test 17
-# Brute force attempt, passes all timeouts
+#https://www.hackerrank.com/contests/projecteuler/challenges/euler093/
 
-def applyOperations(val, vals_found):
-    num_of_operations = len(val) - 1
-    if num_of_operations == 0 and val[0].is_integer() and val[0] >= 1:
-        vals_found.add(int(val[0]))
+import itertools
+
+def closeEnough(val):
+    EPSILON = 0.0001
+    mod1 = val % 1
+    return mod1 < EPSILON or mod1 > (1 - EPSILON)
+
+
+def applyOperations(vals, vals_found):
+    num_of_operations = len(vals) - 1
+    if num_of_operations == 0 and closeEnough(vals[0]) and vals[0] >= 1:
+        vals_found.add(int(vals[0]))
         return
     for i in range(num_of_operations):
         x = [0 for i in range(4)]
-        x[0] = mul(i, val)
-        x[1] = add(i, val)
-        x[2] = sub(i, val)
+        x[0] = mul(i, vals)
+        x[1] = add(i, vals)
+        x[2] = sub(i, vals)
         try:
-            x[3] = div(i, val)
+            x[3] = div(i, vals)
         except ZeroDivisionError:
             x.pop()
         if num_of_operations > 0:
@@ -26,7 +32,7 @@ def div(index, arr):
         raise IndexError
     if arr[index + 1] == 0:
         raise ZeroDivisionError
-    return arr[:index] + [round(arr[index] / arr[index + 1], 8)] + arr[index+2:]
+    return arr[:index] + [arr[index] / arr[index + 1]] + arr[index+2:]
 
 def mul(index, arr):
     if index >= len(arr):
