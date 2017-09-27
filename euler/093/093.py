@@ -2,12 +2,19 @@
 
 import itertools
 
-def closeEnough(val):
-    EPSILON = 0.0001
+"""
+if val is within EPSILON of an integer, it returns true
+"""
+def closeEnough(val, EPSILON = 0.0001):
     mod1 = val % 1
     return mod1 < EPSILON or mod1 > (1 - EPSILON)
 
-
+"""
+goes through vals (list) and applies +,-,*,/ reducing it until it's only 1 element
+adds all the integer values >= 1 to vals_found
+NOTE: This only works if the vals are numbers but not saved as integers
+ex: [float(val) for val in vals] instead of [int(val) for val in vals]
+"""
 def applyOperations(vals, vals_found):
     num_of_operations = len(vals) - 1
     if num_of_operations == 0 and closeEnough(vals[0]) and vals[0] >= 1:
@@ -26,7 +33,9 @@ def applyOperations(vals, vals_found):
             for arr in x:
                 applyOperations(arr, vals_found)
 
-
+"""
+reduces an array by 1, divides the index by index + 1 and puts that in spot index
+"""
 def div(index, arr):
     if index >= len(arr):
         raise IndexError
@@ -34,20 +43,30 @@ def div(index, arr):
         raise ZeroDivisionError
     return arr[:index] + [arr[index] / arr[index + 1]] + arr[index+2:]
 
+"""
+reduces an array by 1, multiplies the index by index + 1 and puts that in spot index
+"""
 def mul(index, arr):
     if index >= len(arr):
         raise IndexError
     return arr[:index] + [arr[index] * arr[index + 1]] + arr[index+2:]
 
+"""
+reduces an array by 1, adds the index by index + 1 and puts that in spot index
+"""
 def add(index, arr):
     if index >= len(arr):
         raise IndexError
     return arr[:index] + [arr[index] + arr[index + 1]] + arr[index+2:]
 
+"""
+reduces an array by 1, subtracts the index by index + 1 and puts that in spot index
+"""
 def sub(index, arr):
     if index >= len(arr):
         raise IndexError
     return arr[:index] + [arr[index] - arr[index + 1]] + arr[index+2:]
+
 
 def main():
     n = int(input())
