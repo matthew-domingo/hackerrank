@@ -1,5 +1,4 @@
 #!/bin/python3
-
 # https://www.hackerrank.com/contests/projecteuler/challenges/euler010/problem
 
 import sys
@@ -17,8 +16,8 @@ def primeSieve(n = 100):
     for i, isPrime in enumerate(nextPrimes):
         if isPrime:
             # upon finding the next prime, mark all multiples of that prime False
-            for ii, __ in enumerate(nextPrimes[2*i::i]):
-                nextPrimes[(ii+2)*i] = False
+            for ii, __ in enumerate(nextPrimes[2*i::i], 2):
+                nextPrimes[ii*i] = False
             primes.append(i)
     return primes
 
@@ -31,7 +30,7 @@ def printArrToSums(sortedSummingArr, iteratingArr):
     it iterates through each test twice and the prime list only once
     """
     arrSorted = sorted(iteratingArr)
-    dictOfShortening = dict()
+    numToSum = dict()
     currPrimeIndex = 0
     runningSum = 0
     # this part goes through the sorted array adds the appropriate values to a dictionary
@@ -39,10 +38,10 @@ def printArrToSums(sortedSummingArr, iteratingArr):
         while sortedSummingArr[currPrimeIndex] <= num:
             runningSum += sortedSummingArr[currPrimeIndex]
             currPrimeIndex += 1
-        dictOfShortening[num] = runningSum
+        numToSum[num] = runningSum
     # printing in the same order as the input array
     for num in iteratingArr:
-        print(dictOfShortening[num])
+        print(numToSum[num])
 
 def main():
     primes = primeSieve(10**6)
