@@ -6,6 +6,7 @@ import java.util.regex.*;
 
 public class Solution {
 
+    // DOESN'T WORK
     private abstract class Heap {
         Double[] heap;
         int maxSize = 10;
