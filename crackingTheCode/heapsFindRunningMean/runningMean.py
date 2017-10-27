@@ -18,7 +18,7 @@ class Heap:
         return(len(self.arr) > self.right_child(pos))
     def has_parent(self, pos):
         return pos > 0
-    def peak(self):
+    def peek(self):
         if len(self.arr) > 0:
             return self.arr[0]
         return 0
@@ -124,7 +124,7 @@ for _ in range(n):
     balanceHeaps(bigHeap, smallHeap)
     is_even = not is_even
     if is_even:
-        median = (bigHeap.peak() + smallHeap.peak()) / 2
+        median = (bigHeap.peek() + smallHeap.peek()) / 2
     else:
-        median = bigHeap.peak()
+        median = bigHeap.peek()
     print("%.1f" % (median))
