@@ -15,14 +15,14 @@ public class Solution {
             heap = new Double[maxSize];
         }
         int parent(int pos) {return (int)Math.floor((pos - 1)/2.0);}
-        boolean hasParent(int pos) {return parent(pos) > 0;}
-        int left(int pos) {return (pos + 1) * 2;}
-        int right(int pos) {return (pos + 2) * 2;}
+        boolean hasParent(int pos) {return parent(pos) >= 0;}
+        int left(int pos) {return pos*2 + 1;}
+        int right(int pos) {return pos*2 + 2;}
         boolean hasLeft(int pos) {return left(pos) < currSize;}
         boolean hasRight(int pos) {return right(pos) < currSize;}
         abstract void heapUp();
         abstract void heapDown();
-        void insert(double val) {
+        void add(double val) {
             currSize++;
             if (currSize >= maxSize)
                 doubleSize();
@@ -38,12 +38,22 @@ public class Solution {
             heapDown();
             return res;
         }
+        double peek() {
+            if (currSize == 0)
+                return 0;
+            return heap[0];
+        }
         void doubleSize() {
             maxSize *= 2;
             Double[] tmp = new Double[maxSize];
             for (int i = 0; i < currSize; i++) {
                 tmp[i] = heap[i];
             }
+        }
+        void swap(int pos1, int pos2) {
+            double tmp = heap[pos2];
+            heap[pos2] = heap[pos1];
+            heap[pos1] = tmp;
         }
     }
 
@@ -53,10 +63,8 @@ public class Solution {
             int pos = currSize - 1;
             while (hasParent(pos)) {
                 int par = parent(pos);
-                if (heap[par] < heap[pos]) {
-                    double tmp = heap[par];
-                    heap[par] = heap[pos];
-                    heap[pos] = tmp;
+                if (heap[pos] > heap[par]) {
+                    swap(pos, par);
                     pos = par;
                 }
                 else
@@ -77,10 +85,8 @@ public class Solution {
                 } else {
                     child = left(pos);
                 }
-                if (heap[child] > heap[pos]) {
-                    double tmp = heap[child];
-                    heap[child] = heap[pos];
-                    heap[pos] = tmp;
+                if (heap[child] < heap[pos]) {
+                    swap(pos, child);
                     pos = child;
                 } else {
                     break;
@@ -95,10 +101,8 @@ public class Solution {
             int pos = currSize - 1;
             while (hasParent(pos)) {
                 int par = parent(pos);
-                if (heap[par] > heap[pos]) {
-                    double tmp = heap[par];
-                    heap[par] = heap[pos];
-                    heap[pos] = tmp;
+                if (heap[pos] < heap[par]) {
+                    swap(pos, par);
                     pos = par;
                 }
                 else
@@ -120,9 +124,7 @@ public class Solution {
                     child = left(pos);
                 }
                 if (heap[child] < heap[pos]) {
-                    double tmp = heap[child];
-                    heap[child] = heap[pos];
-                    heap[pos] = tmp;
+                    swap(pos, child);
                     pos = child;
                 } else {
                     break;
@@ -131,12 +133,36 @@ public class Solution {
         }
     }
 
+    public static void balanceHeaps(Solution.MaxHeap smallHeap, Solution.MinHeap bigHeap) {
+        if (smallHeap.currSize > bigHeap.currSize) {
+            bigHeap.add(smallHeap.pop());
+        } else if (smallHeap.currSize + 1 < bigHeap.currSize) {
+            smallHeap.add(bigHeap.pop());
+        }
+    }
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         int n = in.nextInt();
-        int[] a = new int[n];
+        Solution.MaxHeap smallHeap = new Solution().new MaxHeap();
+        Solution.MinHeap bigHeap = new Solution().new MinHeap();
+        double median = 0;
+        boolean is_even = true;
         for(int a_i=0; a_i < n; a_i++){
-            a[a_i] = in.nextInt();
+            is_even = !is_even;
+            int val = in.nextInt();
+            if (median < val)
+                bigHeap.add(val);
+            else
+                smallHeap.add(val);
+            balanceHeaps(smallHeap, bigHeap);
+            if (is_even) {
+                median = bigHeap.peek() + smallHeap.peek();
+                median /= 2.0;
+            } else {
+                median = bigHeap.peek();
+            }
+            System.out.println(String.format("%.1f", median));
         }
     }
 }
