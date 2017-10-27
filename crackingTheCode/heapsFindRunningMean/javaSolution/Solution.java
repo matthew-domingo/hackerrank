@@ -4,142 +4,142 @@ import java.text.*;
 import java.math.*;
 import java.util.regex.*;
 
+/**
+ * https://www.hackerrank.com/challenges/ctci-find-the-running-median/problem
+ */
 public class Solution {
 
-    // DOESN'T WORK
     private abstract class Heap {
-        Double[] heap;
-        int maxSize = 10;
-        int currSize = 0;
+        protected int size;
+        protected int capacity;
+        protected int[] heap;
 
         public Heap() {
-            heap = new Double[maxSize];
+            this.size = 0;
+            this.capacity = 10;
+            this.heap = new int[capacity];
         }
-        int parent(int pos) {return (int)Math.floor((pos - 1)/2.0);}
-        boolean hasParent(int pos) {return parent(pos) >= 0;}
-        int left(int pos) {return pos*2 + 1;}
-        int right(int pos) {return pos*2 + 2;}
-        boolean hasLeft(int pos) {return left(pos) < currSize;}
-        boolean hasRight(int pos) {return right(pos) < currSize;}
-        abstract void heapUp();
-        abstract void heapDown();
-        void add(double val) {
-            currSize++;
-            if (currSize >= maxSize)
-                doubleSize();
-            heap[currSize - 1] = val;
+
+        public int parentIndex(int index) {return (index - 1) / 2;}
+        public boolean hasParent(int index) {return parentIndex(index) >= 0;}
+        public int parentValue(int index) {return heap[parentIndex(index)];}
+
+        public int leftIndex(int index) {return 2 * index + 1;}
+        public boolean hasLeft(int index) {return leftIndex(index) < size;}
+        public int leftValue(int index) {return heap[leftIndex(index)];}
+
+        public int rightIndex(int index) {return 2 * index + 2;}
+        public boolean hasRight(int index) {return rightIndex(index) < size;}
+        public int rightValue(int index) {return heap[rightIndex(index)];}
+
+        public void add(int val) {
+            ensureCapcity();
+            heap[size++] = val;
             heapUp();
         }
-        double pop() {
-            if (currSize == 0)
-                return 0;
-            Double res = heap[0];
-            heap[0] = heap[--currSize];
-            heap[currSize] = null;
+
+        public int pop() {
+            isEmpty("pop");
+            int res = heap[0];
+            heap[0] = heap[--size];
             heapDown();
             return res;
         }
-        double peek() {
-            if (currSize == 0)
-                return 0;
+
+        public int peek() {
+            isEmpty("peek");
             return heap[0];
         }
-        void doubleSize() {
-            maxSize *= 2;
-            Double[] tmp = new Double[maxSize];
-            for (int i = 0; i < currSize; i++) {
+
+        private void isEmpty(String methodName) {
+            if (size == 0)
+                throw new IllegalStateException("You cannot perform '" + methodName + "' on an empty Heap.");
+        }
+
+        private void ensureCapcity() {
+            if (size >= capacity)
+                doubleSize();
+        }
+        private void doubleSize() {
+            capacity *= 2;
+            int[] tmp = new int[capacity];
+            for (int i = 0; i < size; i++) {
                 tmp[i] = heap[i];
             }
+            heap = tmp;
         }
-        void swap(int pos1, int pos2) {
-            double tmp = heap[pos2];
-            heap[pos2] = heap[pos1];
-            heap[pos1] = tmp;
+
+        protected void swap(int index1, int index2) {
+            int tmp = heap[index2];
+            heap[index2] = heap[index1];
+            heap[index1] = tmp;
         }
+
+        abstract void heapUp();
+        abstract void heapDown();
     }
 
     private class MaxHeap extends Heap {
         @Override
-        void heapUp() {
-            int pos = currSize - 1;
-            while (hasParent(pos)) {
-                int par = parent(pos);
-                if (heap[pos] > heap[par]) {
-                    swap(pos, par);
-                    pos = par;
+        void heapDown() {
+            int index = 0;
+            while (hasLeft(index)) {
+                int indexChild = leftIndex(index);
+                if (hasRight(index) && (leftValue(index) < rightValue(index))) {
+                    indexChild = rightIndex(index);
                 }
-                else
+                if (heap[index] < heap[indexChild]) {
+                    swap(index, indexChild);
+                    index = indexChild;
+                } else {
                     break;
+                }
             }
         }
 
         @Override
-        void heapDown() {
-            int pos = 0;
-            int child = 0;
-            while (hasLeft(pos)) {
-                if (hasRight(pos)) {
-                    if (heap[left(pos)] > heap[right(pos)])
-                        child = left(pos);
-                    else
-                        child = right(pos);
-                } else {
-                    child = left(pos);
-                }
-                if (heap[child] < heap[pos]) {
-                    swap(pos, child);
-                    pos = child;
-                } else {
-                    break;
-                }
+        void heapUp() {
+            int index = size - 1;
+            while (hasParent(index) && (parentValue(index) < heap[index])) {
+                swap(index, parentIndex(index));
+                index = parentIndex(index);
             }
         }
     }
 
     private class MinHeap extends Heap {
         @Override
-        void heapUp() {
-            int pos = currSize - 1;
-            while (hasParent(pos)) {
-                int par = parent(pos);
-                if (heap[pos] < heap[par]) {
-                    swap(pos, par);
-                    pos = par;
+        void heapDown() {
+            int index = 0;
+            while (hasLeft(index)) {
+                int indexChild = leftIndex(index);
+                if (hasRight(index) && (leftValue(index) > rightValue(index))) {
+                    indexChild = rightIndex(index);
                 }
-                else
+                if (heap[index] > heap[indexChild]) {
+                    swap(index, indexChild);
+                    index = indexChild;
+                } else {
                     break;
+                }
             }
         }
 
         @Override
-        void heapDown() {
-            int pos = 0;
-            int child = 0;
-            while (hasLeft(pos)) {
-                if (hasRight(pos)) {
-                    if (heap[left(pos)] < heap[right(pos)])
-                        child = left(pos);
-                    else
-                        child = right(pos);
-                } else {
-                    child = left(pos);
-                }
-                if (heap[child] < heap[pos]) {
-                    swap(pos, child);
-                    pos = child;
-                } else {
-                    break;
-                }
+        void heapUp() {
+            int index = size - 1;
+            while (hasParent(index) && (parentValue(index) > heap[index])) {
+                swap(index, parentIndex(index));
+                index = parentIndex(index);
             }
         }
     }
 
     public static void balanceHeaps(Solution.MaxHeap smallHeap, Solution.MinHeap bigHeap) {
-        if (smallHeap.currSize > bigHeap.currSize) {
+        while (smallHeap.size > bigHeap.size)
             bigHeap.add(smallHeap.pop());
-        } else if (smallHeap.currSize + 1 < bigHeap.currSize) {
+        while (smallHeap.size < bigHeap.size - 1)
             smallHeap.add(bigHeap.pop());
-        }
     }
 
     public static void main(String[] args) {
