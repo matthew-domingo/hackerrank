@@ -47,7 +47,7 @@ class MaxHeap(Heap):
 
     def downHeap(self):
         pos = 0
-        while(self.has_left_child(pos) or self.has_right_child(pos)):
+        while(self.has_left_child(pos)):
             child = 0
             if self.has_right_child(pos):
                 if self.arr[self.left_child(pos)] > self.arr[self.right_child(pos)]:
@@ -79,7 +79,7 @@ class MinHeap(Heap):
 
     def downHeap(self):
         pos = 0
-        while(self.has_left_child(pos) or self.has_right_child(pos)):
+        while(self.has_left_child(pos)):
             child = 0
             if self.has_right_child(pos):
                 if self.arr[self.left_child(pos)] < self.arr[self.right_child(pos)]:
