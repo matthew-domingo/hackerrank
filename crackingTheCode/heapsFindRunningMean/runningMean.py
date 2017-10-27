@@ -1,5 +1,5 @@
 #!/bin/python3
-
+""" Problem from https://www.hackerrank.com/challenges/ctci-find-the-running-median/problem"""
 import sys
 
 class Heap:
